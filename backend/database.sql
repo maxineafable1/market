@@ -28,16 +28,37 @@ CREATE TABLE tokens (
 CREATE TABLE posts (
   post_id SERIAL,
   title VARCHAR(200) NOT NULL,
-  description TEXT,
   price NUMERIC(8, 2) NOT NULL,
-  category VARCHAR(100) NOT NULL,
-  image TEXT NOT NULL,
+  type VARCHAR(100) NOT NULL,
+  images TEXT NOT NULL,
+  description TEXT,
+  condition VARCHAR(100) NOT NULL,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   user_id uuid,
   PRIMARY KEY (post_id),
   FOREIGN KEY (user_id)
     REFERENCES users(user_id)
+      ON DELETE CASCADE
+);
+
+CREATE TABLE vehicles (
+  vehicle_id SERIAL,
+  make VARCHAR(200) NOT NULL,
+  model VARCHAR(200) NOT NULL,
+  year VARCHAR(100) NOT NULL,
+  exterior_color VARCHAR(100) NOT NULL,
+  condition VARCHAR(100) NOT NULL,
+  fuel_type VARCHAR(100),
+  transmission VARCHAR(100),
+  mileage NUMERIC(6, 0),
+  clean_title BOOLEAN,
+  body_style VARCHAR(100),
+  interior_color VARCHAR(100),
+  post_id INT,
+  PRIMARY KEY (vehicle_id),
+  FOREIGN KEY (post_id)
+    REFERENCES posts(post_id)
       ON DELETE CASCADE
 );
 
