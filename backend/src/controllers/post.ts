@@ -12,7 +12,7 @@ async function getPosts(req: Request, res: Response) {
       return res.status(400).json({ error: 'Invalid search for posts' })
 
     // this sets the pagination to get the posts
-    const posts = await pool.query(`SELECT title, price, description, images, condition, type FROM posts LIMIT ${itemsPerPage} OFFSET ${(+page - 1) * +itemsPerPage}`)
+    const posts = await pool.query(`SELECT post_id, title, price, description, images, condition, type FROM posts LIMIT ${itemsPerPage} OFFSET ${(+page - 1) * +itemsPerPage}`)
     res.status(200).json(posts.rows)
   } catch (error) {
     setErrorAndStatusCode(res, error, 500)
@@ -28,7 +28,7 @@ async function getPost(req: Request, res: Response) {
       return res.status(400).json({ error: 'Invalid search for post' })
 
     // to get the post details by using its type 
-    const post = await pool.query(`SELECT * FROM posts p INNER JOIN ${type} o USING (post_id) WHERE p.post_id = $1`, [postId])
+    const post = await pool.query(`SELECT * FROM posts p INNER JOIN ${type} t USING (post_id) WHERE p.post_id = $1`, [postId])
     if (post.rowCount === 0)
       return res.sendStatus(404)
 

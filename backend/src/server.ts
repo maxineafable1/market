@@ -8,6 +8,7 @@ app.use(express.json())
 app.use(cors())
 
 const PORT = process.env.PORT
+app.use(express.static('uploads'))
 
 app.use('/api/users', userRouter)
 app.use('/api/posts', postRouter)

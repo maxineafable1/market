@@ -85,8 +85,8 @@ function validateVehicle(req: Request, res: Response, fileNames: string[]) {
     return setRequestBodyError(res, 400, 'Body style length must be 1 to 100 characters', fileNames)
 
   // TODO validate true or false for cleanTitle
-  if (!validBoolean(cleanTitle))
-    return setRequestBodyError(res, 400, 'Clean title must be true or false', fileNames)
+  // if (!validBoolean(cleanTitle))
+  //   return setRequestBodyError(res, 400, 'Clean title must be true or false', fileNames)
 
   return {
     make,

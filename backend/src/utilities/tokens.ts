@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { PayloadType } from './types'
 
 function getAccessToken(user: PayloadType) {
-  return jwt.sign(user, process.env.ACCESS_KEY as string, { expiresIn: '1d' })
+  return jwt.sign(user, process.env.ACCESS_KEY as string, { expiresIn: '5m' })
 }
 
 function getRefreshToken(user: PayloadType) {

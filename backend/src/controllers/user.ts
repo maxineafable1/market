@@ -100,14 +100,16 @@ async function signup(req: Request, res: Response) {
 }
 
 async function logout(req: Request, res: Response) {
+  // TODO: need refactor
   const { refresh } = req.body
-  const { id: userId } = req.user
+  // const { id: userId } = req.user
 
   if (!refresh)
     return res.status(400).json({ error: 'Refresh token not found' })
 
   try {
-    await pool.query('DELETE FROM tokens WHERE refresh = $1 AND user_id = $2', [refresh, userId])
+    // await pool.query('DELETE FROM tokens WHERE refresh = $1 AND user_id = $2', [refresh, userId])
+    await pool.query('DELETE FROM tokens WHERE refresh = $1', [refresh])
     res.sendStatus(204)
   } catch (error) {
     setErrorAndStatusCode(res, error, 500)
@@ -135,22 +137,30 @@ async function deleteUser(req: Request, res: Response) {
 }
 
 async function getNewAccessToken(req: Request, res: Response) {
+  // TODO: need refactor
   const { refresh } = req.body
-  const { id: userId } = req.user
+  // const { id: userId } = req.user
 
   if (!refresh)
-    return res.status(400).json({ error: 'Refresh token not found' })
+    // return res.status(400).json({ error: 'Refresh token not found' })
+    return res.status(401).json({ error: 'Refresh token not found' })
 
-  const refreshTokenStored = await pool.query('SELECT * FROM tokens WHERE refresh = $1 AND user_id = $2', [refresh, userId])
+  // const refreshTokenStored = await pool.query('SELECT * FROM tokens WHERE refresh = $1 AND user_id = $2', [refresh, userId])
+  const refreshTokenStored = await pool.query('SELECT * FROM tokens WHERE refresh = $1', [refresh])
 
   if (refreshTokenStored.rowCount === 0)
-    return res.sendStatus(403)
+    return res.status(403).json({ error: 'Unauthorized' })
 
   try {
-    jwt.verify(refresh, process.env.REFRESH_KEY as string)
+    const decoded = jwt.verify(refresh, process.env.REFRESH_KEY as string)
+    req.user = decoded
+
+    // const payload: PayloadType = {
+    //   id: userId
+    // }
 
     const payload: PayloadType = {
-      id: userId
+      id: req.user.id
     }
 
     const access = getAccessToken(payload)
@@ -179,7 +189,7 @@ async function updateUserInfo(req: Request, res: Response) {
 
   if (!validText(firstName, 1, 100))
     return res.status(400).json({ error: 'First name length must be 1 to 100 characters' })
-    
+
   if (!validText(lastName, 1, 100))
     return res.status(400).json({ error: 'Last name length must be 1 to 100 characters' })
 

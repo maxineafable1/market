@@ -48,7 +48,7 @@ CREATE TABLE vehicles (
   model VARCHAR(200) NOT NULL,
   year VARCHAR(100) NOT NULL,
   exterior_color VARCHAR(100) NOT NULL,
-  condition VARCHAR(100) NOT NULL,
+  vehicle_condition VARCHAR(100) NOT NULL,
   fuel_type VARCHAR(100),
   transmission VARCHAR(100),
   mileage NUMERIC(6, 0),
