@@ -10,7 +10,6 @@ export default function ImageSlider({ images }: ImageSliderProps) {
   const [imageIndex, setImageIndex] = useState(0)
 
   const imageLists = splitImages(images)
-  console.log(imageLists)
 
   function handleNext() {
     setImageIndex(prev => {
@@ -25,7 +24,7 @@ export default function ImageSlider({ images }: ImageSliderProps) {
   }
 
   return (
-    <div className="w-full h-full relative">
+    <div className="w-full h-full relative shadow-md">
       <div className="w-full h-full flex overflow-hidden">
         {imageLists.map(image => (
           <img
@@ -58,7 +57,10 @@ export default function ImageSlider({ images }: ImageSliderProps) {
             <img 
               src={`http://localhost:4000/${image}`} 
               alt=""
-              className={`block w-full aspect-square object-cover max-w-10 rounded-sm shadow-lg ${index === imageIndex && 'opacity-50'}`}
+              className={`
+                block w-full aspect-square object-cover max-w-10 rounded-sm shadow-lg 
+                ${index !== imageIndex && 'opacity-40 hover:opacity-80'}  
+              `}
             />
           </button>
         ))}

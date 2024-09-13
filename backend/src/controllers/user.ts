@@ -11,10 +11,12 @@ import { setErrorAndStatusCode, validEmail, validText } from "../utilities/funct
 const DEFAULT_IMAGE = 'default.png'
 
 async function userInfo(req: Request, res: Response) {
-  const { id: userId } = req.user
+  // const { id: userId } = req.user
+  const { id: userId } = req.params
 
   try {
-    const user = await pool.query('SELECT phone, email, firstName, lastName, image FROM users WHERE user_id = $1', [userId])
+    // phone, email, first_name, last_name, image
+    const user = await pool.query('SELECT user_id, phone, email, first_name, last_name, image FROM users WHERE user_id = $1', [userId])
 
     if (user.rowCount === 0)
       return res.sendStatus(404)

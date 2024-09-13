@@ -28,4 +28,16 @@
     gap: 0.5rem;
     margin-bottom: 0.25rem;
   }
+
+  .card-post-hover:hover {
+    text-decoration: underline;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+  
+  textarea {
+    resize: none;
+  }
 }

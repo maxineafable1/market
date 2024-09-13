@@ -6,4 +6,5 @@ export type PostType = {
   type: 'vehicles' | 'items'
   condition: string
   images: string
+  user_id: string
 }

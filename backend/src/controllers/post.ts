@@ -12,7 +12,8 @@ async function getPosts(req: Request, res: Response) {
       return res.status(400).json({ error: 'Invalid search for posts' })
 
     // this sets the pagination to get the posts
-    const posts = await pool.query(`SELECT post_id, title, price, description, images, condition, type FROM posts LIMIT ${itemsPerPage} OFFSET ${(+page - 1) * +itemsPerPage}`)
+    // post_id, title, price, description, images, condition, type
+    const posts = await pool.query(`SELECT * FROM posts LIMIT ${itemsPerPage} OFFSET ${(+page - 1) * +itemsPerPage}`)
     res.status(200).json(posts.rows)
   } catch (error) {
     setErrorAndStatusCode(res, error, 500)
@@ -33,6 +34,22 @@ async function getPost(req: Request, res: Response) {
       return res.sendStatus(404)
 
     return res.status(200).json(post.rows[0])
+  } catch (error) {
+    setErrorAndStatusCode(res, error, 500)
+  }
+}
+
+async function getUserPosts(req: Request, res: Response) {
+  // const { id: userId } = req.body
+  // const { id: userId } = req.user
+  const { id: userId } = req.params
+
+  try {
+    const userPosts = await pool.query('SELECT * FROM posts WHERE user_id = $1', [userId])
+    // if (userPosts.rowCount === 0)
+    //   return res.sendStatus(404)
+
+    res.status(200).json(userPosts.rows)
   } catch (error) {
     setErrorAndStatusCode(res, error, 500)
   }
@@ -102,6 +119,7 @@ async function updatePost(req: Request, res: Response) {
 export {
   getPosts,
   getPost,
+  getUserPosts,
   createPost,
   deletePost,
   updatePost,

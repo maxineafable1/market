@@ -3,9 +3,14 @@ import RootComponent from "./components/RootComponent"
 import Home from "./pages/Home"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import Login from "./pages/Login"
-import { getPost, getPosts } from "./utilities/fetch"
+import { getPost, getPosts, getUserInfo, getUserPosts } from "./utilities/fetch"
 import { UserContextReturn, useUserContext } from "./contexts/UserContext"
 import PostDetail from "./pages/PostDetail"
+import Dashboard from "./pages/Dashboard"
+import { jwtDecode } from "jwt-decode"
+import Signup from "./pages/Signup"
+import PostForm from "./pages/PostForm"
+import PostType from "./pages/PostType"
 
 const rootRoute = createRootRouteWithContext<{
   queryClient: QueryClient,
@@ -50,7 +55,7 @@ type PostFilter = {
 export const postDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'item/$postId',
-  component: PostDetail, 
+  component: PostDetail,
   validateSearch: (search: Record<string, unknown>): PostFilter => {
     return {
       type: search.type as 'vehicles' | 'items'
@@ -64,7 +69,7 @@ export const postDetailRoute = createRoute({
 
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/login',
+  path: 'login',
   component: Login,
   beforeLoad: ({ context: { user } }) => {
     const { tokens } = user
@@ -77,15 +82,66 @@ const loginRoute = createRoute({
   }
 })
 
+const signupRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'signup',
+  component: Signup,
+  beforeLoad: ({ context: { user: { tokens } } }) => {
+    if (tokens) {
+      throw redirect({
+        to: '/',
+        search: { page: 1, items: 10 }
+      })
+    }
+  }
+})
+
+export const dashboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'profile/$userId',
+  component: Dashboard,
+  loader: ({ context: { queryClient }, params: { userId } }) => {
+    queryClient.ensureQueryData(getUserInfo(userId))
+    queryClient.ensureQueryData(getUserPosts(userId))
+  },
+})
+
+const postTypeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'item/create',
+  component: PostType,
+  beforeLoad: ({ context: { user: { tokens } } }) => {
+    if (!tokens) {
+      throw redirect({
+        to: '/login',
+      })
+    }
+  },
+})
+
+export const postFormRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'item/create/$type',
+  component: PostForm,
+  beforeLoad: ({ context: { user: { tokens } } }) => {
+    if (!tokens) {
+      throw redirect({
+        to: '/login',
+      })
+    }
+  },
+})
+
 const queryClient = new QueryClient()
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
+  signupRoute,
   postDetailRoute,
-  // postsRoute.addChildren([
-  //   postDetailRoute,
-  // ]),
+  dashboardRoute,
+  postTypeRoute,
+  postFormRoute,
 ])
 
 // Set up a Router instance

@@ -10,9 +10,9 @@ export default function PostList() {
   const { data } = useSuspenseQuery(getPosts(page, items))
 
   return (
-    <ul className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-2">
+    <ul className="grid xl:grid-cols-5 lg:grid-cols-3 sm:grid-cols-2 gap-2">
       {data.map((post: PostType) => (
-        <Post key={post.post_id} {...post} />
+        <Post key={post.post_id} post={post} dashboard={false} />
       ))}
     </ul>
   )

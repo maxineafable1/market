@@ -5,7 +5,7 @@ import { uploadImage } from '../middlewares/image'
 
 const router = express.Router()
 
-router.get('/', auth, userInfo)
+router.get('/:id', userInfo)
 router.post('/login', login)
 router.post('/signup', signup)
 // router.post('/logout', auth, logout)
